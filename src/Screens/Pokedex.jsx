@@ -2,15 +2,16 @@ import { View, Text } from "react-native";
 import React from "react";
 import { useState, useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Pokemon from "./Pokemon";
+import PokemonList from "../Components/PokemonList";
 import { POKEAPI_HOST } from "../utils/constants";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Pokedex () {
     const Stack = createNativeStackNavigator()
 
     const urlApi = `${POKEAPI_HOST}?limit=20&offset=0`
     const [data, setData] = useState(null)
-    const [pokemonDetails, setPokemonDetails] = useState([])
+    const [pokemons, setPokemons] = useState([])
 
     useEffect(() => {
         fetch(urlApi)
@@ -40,17 +41,16 @@ export default function Pokedex () {
             // Usa Promise.all para esperar a que todas las promesas se resuelvan
             Promise.all(detailsPromises)
                 .then(details => {
-                    setPokemonDetails(details.filter(detail => detail !== null))
+                    setPokemons(details.filter(detail => detail !== null))
                 })
                 .catch(error => console.error('Error in fetching all pokemon details:', error))
         }
     }, [data])
 
-    console.log(pokemonDetails)
 
     return (
-        <Stack.Navigator>
-            <Stack.Screen name="Pokemon" component={Pokemon}/>
-        </Stack.Navigator>
+       <SafeAreaView>
+        <PokemonList pokemons={pokemons}/>
+       </SafeAreaView> 
     )
 }
